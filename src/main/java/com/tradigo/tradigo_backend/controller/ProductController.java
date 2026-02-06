@@ -1,7 +1,6 @@
 package com.tradigo.tradigo_backend.controller;
 
 import com.tradigo.tradigo_backend.model.Product;
-import com.tradigo.tradigo_backend.repository.ProductRepository;
 import com.tradigo.tradigo_backend.service.ProductService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
@@ -11,25 +10,45 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("api/products")
+@RequestMapping("/api/products")
 @RequiredArgsConstructor
-@CrossOrigin
+@CrossOrigin("*")
 public class ProductController {
 
-    private final ProductService productService;
-    private final ProductRepository productRepository;
+    private final ProductService service;
 
-    @GetMapping("/top")
-    public Object topProducts() {
-        return productService.getTopProducts();
-    }
-
+    // 🔥 Retailer marketplace
     @GetMapping
     public List<Product> getProducts(
             @RequestParam int page,
             @RequestParam int size
     ) {
         Pageable pageable = PageRequest.of(page, size);
-        return productRepository.findAll(pageable).getContent();
+        return service.getTopProducts(); // you can change later to pageable
+    }
+
+    // 🔥 Top products (home/dashboard)
+    @GetMapping("/top")
+    public List<Product> topProducts() {
+        return service.getTopProducts();
+    }
+
+    // 🔥 Wholesaler add product
+    @PostMapping
+    public Product add(@RequestBody Product product) {
+        return service.addProduct(product);
+    }
+
+    // 🔥 Wholesaler my products
+    @GetMapping("/wholesaler/{wholesalerId}")
+    public List<Product> myProducts(@PathVariable String wholesalerId) {
+        return service.getMyProducts(wholesalerId);
+    }
+
+    // 🔥 Delete
+    @DeleteMapping("/{id}")
+    public String delete(@PathVariable String id) {
+        service.deleteProduct(id);
+        return "Deleted";
     }
 }

@@ -11,9 +11,23 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ProductService {
 
-    private final ProductRepository productRepository;
+    private final ProductRepository repository;
+
+    public Product addProduct(Product product) {
+        product.setCreatedAt(System.currentTimeMillis());
+        product.setActive(true);
+        return repository.save(product);
+    }
+
+    public List<Product> getMyProducts(String wholesalerId) {
+        return repository.findByWholesalerId(wholesalerId);
+    }
+
+    public void deleteProduct(String id) {
+        repository.deleteById(id);
+    }
 
     public List<Product> getTopProducts() {
-        return productRepository.findTop10ByIsActiveTrue();
+        return repository.findTop10ByIsActiveTrue();
     }
 }

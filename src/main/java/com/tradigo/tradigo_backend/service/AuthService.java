@@ -56,8 +56,9 @@ public class AuthService {
 
         return new java.util.HashMap<>() {{
             put("token", token);
-            put("user", user);
+            put("role", user.getRole().toLowerCase()); // ⭐ CRITICAL FIX
         }};
     }
+
 
 }
